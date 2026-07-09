@@ -62,7 +62,7 @@ st.markdown("Memonitoring Konsistensi Membaca & Perkembangan Tren Empati Anggota
 st.markdown("---")
 
 # 3. KONEKSI DATA & CACHING (Efisien agar tidak berat saat reload)
-SHEET_CSV_URL = "URL_CSV_GOOGLE_SHEET_MU" # Ganti dengan URL CSV Publish to Web kamu
+SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRefCDk21THyWTZxfyzVeOam0ads4HD2m_GySetpi3uIoSLR7YAITUXjfAQSMXLAAEtXvufxrKuwuBe/pub?gid=1074415517&single=true&output=csv" # Ganti dengan URL CSV Publish to Web kamu
 
 @st.cache_data(ttl=300) # Data disimpan di memori selama 5 menit agar loading instan
 def load_data():
