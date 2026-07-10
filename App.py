@@ -162,24 +162,36 @@ if df is not None:
         fig_pie.update_layout(showlegend=True, legend=dict(orientation="h", y=-0.1))
         st.plotly_chart(fig_pie, use_container_width=True)
 
-    with col_grafik2:
-        st.subheader("📈 Tren Longitudinal Empati Afektif")
-        # Grafik Garis Area Interaktif (Bisa di-zoom, hover detail per tanggal)
-        df_chart = df_filtered.dropna(subset=['Skor Empati']).sort_values('Timestamp')
+   with col_grafik2:
+        st.subheader("📈 Rata-rata Skor Empati per Anggota")
         
-        if not df_chart.empty:
-            fig_trend = px.line(
-                df_chart, 
-                x='Timestamp', 
-                y='Skor Empati', 
-                color='Nama',
-                markers=True,
-                line_shape='spline', # Membuat garis melengkung halus (smooth)
+        # Menghitung rata-rata skor empati untuk setiap nama anggota
+        df_avg_empati = df_filtered.groupby('Nama')['Skor Empati'].mean().reset_index()
+        df_avg_empati = df_avg_empati.dropna().sort_values('Skor Empati', ascending=True)
+        
+        if not df_avg_empati.empty:
+            # Membuat Bar Chart Horizontal yang sederhana dan rapi
+            fig_trend = px.bar(
+                df_avg_empati, 
+                x='Skor Empati', 
+                y='Nama', 
+                orientation='h', # Grafik horizontal agar nama tidak terpotong
+                text='Skor Empati', # Menampilkan angka skor langsung di atas batang
                 template="plotly_white",
-                color_discrete_sequence=px.colors.qualitative.Safe
+                color='Skor Empati', # Memberikan gradasi warna berdasarkan skor
+                color_continuous_scale=px.colors.sequential.Purples # Palet ungu senada dengan kartu skor
             )
-            # Kustomisasi tooltips hover JavaScript Plotly agar informatif
-            fig_trend.update_traces(mode="lines+markers", hovertemplate="<b>%{hovertext}</b><br>Tanggal: %{x}<br>Skor: %{y}")
+            
+            # Merapikan tampilan teks skor (dibulatkan 1 angka di belakang koma)
+            fig_trend.update_traces(
+                texttemplate='%{text:.1f}', 
+                textposition='inside',
+                hovertemplate="<b>% {y}</b><br>Rata-rata Skor: % {x:.1f}"
+            )
+            
+            # Menghilangkan bar skala warna di sebelah kanan agar grafik lebih bersih
+            fig_trend.update_layout(coloraxis_showscale=False, xaxis_title="Skor Empati (1-100)", yaxis_title="")
+            
             st.plotly_chart(fig_trend, use_container_width=True)
         else:
             st.info("Belum ada data skor empati untuk visualisasi tren.")
