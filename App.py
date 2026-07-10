@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Sentuhan Kustom CSS (Warna Pastel Lembut dengan Transparansi 50% & Hover Effect)
+# 2. Sentuhan Kustom CSS (Sidebar, Metrics, & Bagan Grafik dengan Transparansi Pastel)
 st.markdown("""
     <style>
     /* Mengubah warna latar belakang utama halaman */
@@ -18,43 +18,53 @@ st.markdown("""
         background-color: #f8f9fa;
     }
     
-    /* TARGETING KARTU INDIVIDU BERDASARKAN URUTAN KOLOM */
-    /* Kartu 1 (Total Laporan) - Biru Pastel Lembut (50% Transparansi) */
+    /* 🟢 KUSTOMISASI SIDEBAR (KONTROL NAVIGASI) */
+    section[data-testid="stSidebar"] {
+        background-color: rgba(241, 243, 245, 0.95) !important;
+        border-right: 1px solid #dee2e6;
+    }
+    section[data-testid="stSidebar"] .stSelectbox label {
+        color: #495057 !important;
+        font-weight: 700 !important;
+    }
+    /* Kotak pilah di dalam sidebar */
+    section[data-testid="stSidebar"] div[data-baseweb="select"] {
+        background-color: rgba(74, 144, 226, 0.08) !important;
+        border: 1px solid rgba(74, 144, 226, 0.3) !important;
+        border-radius: 8px;
+    }
+    
+    /* 🔵 TARGETING KARTU METRICS */
+    /* Kartu 1 (Total Laporan) - Biru Pastel */
     div[data-testid="stHorizontalBlock"] > div:nth-child(1) div[data-testid="stMetric"] {
-        background-color: rgba(74, 144, 226, 0.15) !important;
+        background-color: rgba(74, 144, 226, 0.12) !important;
         border-left: 5px solid rgba(74, 144, 226, 0.7);
     }
-    
-    /* Kartu 2 (Total Halaman) - Hijau Sage Lembut (50% Transparansi) */
+    /* Kartu 2 (Total Halaman) - Hijau Sage */
     div[data-testid="stHorizontalBlock"] > div:nth-child(2) div[data-testid="stMetric"] {
-        background-color: rgba(76, 175, 80, 0.15) !important;
+        background-color: rgba(76, 175, 80, 0.12) !important;
         border-left: 5px solid rgba(76, 175, 80, 0.7);
     }
-    
-    /* Kartu 3 (Rata-rata Skor Empati) - Ungu Lavender Lembut (50% Transparansi) */
+    /* Kartu 3 (Rata-rata Skor Empati) - Ungu Lavender */
     div[data-testid="stHorizontalBlock"] > div:nth-child(3) div[data-testid="stMetric"] {
-        background-color: rgba(155, 89, 182, 0.15) !important;
+        background-color: rgba(155, 89, 182, 0.12) !important;
         border-left: 5px solid rgba(155, 89, 182, 0.7);
     }
     
-    /* Base Styling untuk Semua Kartu Metrics */
+    /* Base Styling Metrics */
     div[data-testid="stMetric"] {
         border-radius: 12px !important;
         padding: 20px 25px !important;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02) !important;
-        border-top: 1px solid rgba(0,0,0,0.05) !important;
-        border-right: 1px solid rgba(0,0,0,0.05) !important;
-        border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01) !important;
+        border-top: 1px solid rgba(0,0,0,0.03) !important;
+        border-right: 1px solid rgba(0,0,0,0.03) !important;
+        border-bottom: 1px solid rgba(0,0,0,0.03) !important;
         transition: transform 0.3s ease, box-shadow 0.3s ease !important;
     }
-    
-    /* Efek Interaktif Kustom saat Mouse Mengarah ke Kartu */
     div[data-testid="stMetric"]:hover {
-        transform: translateY(-5px) !important;
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08) !important;
+        transform: translateY(-4px) !important;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06) !important;
     }
-    
-    /* Kustomisasi Tipografi Teks Metric agar Lebih Tajam */
     div[data-testid="stMetricLabel"] {
         font-size: 13px !important;
         color: #495057 !important;
@@ -67,7 +77,15 @@ st.markdown("""
         font-weight: 800 !important;
     }
     
-    /* Garis Pembatas (HR) */
+    /* 🟠 KUSTOMISASI KOTAK LATAR BELAKANG UNTUK SETIAP GRAFIK */
+    .element-container:has(iframe) {
+        background-color: rgba(255, 255, 255, 0.6) !important;
+        padding: 15px !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(233, 236, 239, 0.8) !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.01) !important;
+    }
+    
     hr {
         margin-top: 2rem;
         margin-bottom: 2rem;
