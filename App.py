@@ -162,7 +162,7 @@ if df is not None:
         fig_pie.update_layout(showlegend=True, legend=dict(orientation="h", y=-0.1))
         st.plotly_chart(fig_pie, use_container_width=True)
 
-   with col_grafik2:
+     with col_grafik2:
         st.subheader("📈 Rata-rata Skor Empati per Anggota")
         
         # Menghitung rata-rata skor empati untuk setiap nama anggota
