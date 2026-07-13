@@ -12,14 +12,28 @@ st.set_page_config(
 st.markdown("""
     <style>
     .stApp {
-        background-color: #f8f9fa;
+        background: linear-gradient(135deg, #eef2fb 0%, #f3eefc 45%, #fdf1f5 100%);
+    }
+    div[data-testid="stHorizontalBlock"] > div:nth-child(1) div[data-testid="stMetric"] {
+        background-color: rgba(74, 144, 226, 0.14) !important;
+        border-left: 5px solid rgba(74, 144, 226, 0.8);
+    }
+    div[data-testid="stHorizontalBlock"] > div:nth-child(2) div[data-testid="stMetric"] {
+        background-color: rgba(220, 100, 60, 0.14) !important;
+        border-left: 5px solid rgba(220, 100, 60, 0.8);
+    }
+    div[data-testid="stHorizontalBlock"] > div:nth-child(3) div[data-testid="stMetric"] {
+        background-color: rgba(76, 175, 80, 0.14) !important;
+        border-left: 5px solid rgba(76, 175, 80, 0.8);
+    }
+    div[data-testid="stHorizontalBlock"] > div:nth-child(4) div[data-testid="stMetric"] {
+        background-color: rgba(155, 89, 182, 0.14) !important;
+        border-left: 5px solid rgba(155, 89, 182, 0.8);
     }
     div[data-testid="stMetric"] {
-        background-color: rgba(74, 144, 226, 0.10) !important;
-        border-left: 5px solid rgba(74, 144, 226, 0.7);
         border-radius: 12px !important;
         padding: 20px 25px !important;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01) !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03) !important;
     }
     div[data-testid="stMetricLabel"] {
         font-size: 13px !important;
@@ -32,7 +46,7 @@ st.markdown("""
         font-weight: 800 !important;
     }
     .element-container:has(iframe) {
-        background-color: rgba(255, 255, 255, 0.6) !important;
+        background-color: rgba(255, 255, 255, 0.75) !important;
         padding: 15px !important;
         border-radius: 14px !important;
         border: 1px solid rgba(233, 236, 239, 0.8) !important;
