@@ -9,10 +9,11 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-.stApp {
+st.markdown("""
+    <style>
+    .stApp {
         background: linear-gradient(135deg, #eef2fb 0%, #f3eefc 45%, #fdf1f5 100%);
-}
-
+    }
     div[data-testid="stHorizontalBlock"] > div:nth-child(1) div[data-testid="stMetric"] {
         background-color: rgba(74, 144, 226, 0.14) !important;
         border-left: 5px solid rgba(74, 144, 226, 0.8);
