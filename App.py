@@ -12,8 +12,11 @@ st.set_page_config(
 st.markdown("""
     <style>
     .stApp {
-        background: linear-gradient(135deg, #eef2fb 0%, #f3eefc 45%, #fdf1f5 100%);
-    }
+    background-color: #FAF3E5;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='60'%20height='60'%20viewBox='0%200%2060%2060'%3E%3Cg%20fill='none'%20stroke='%23e3d4b8'%20stroke-width='2'%3E%3Cpath%20d='M10%2015%20Q20%2010%2030%2015%20L30%2045%20Q20%2040%2010%2045%20Z'/%3E%3Cpath%20d='M50%2015%20Q40%2010%2030%2015%20L30%2045%20Q40%2040%2050%2045%20Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 80px 80px;
+}
     div[data-testid="stHorizontalBlock"] > div:nth-child(1) div[data-testid="stMetric"] {
         background-color: rgba(74, 144, 226, 0.14) !important;
         border-left: 5px solid rgba(74, 144, 226, 0.8);
