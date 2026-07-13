@@ -2,63 +2,29 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 1. Konfigurasi Halaman & Tema Dasar
 st.set_page_config(
     page_title="Lingkar Cerita Dashboard",
     page_icon="📖",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# 2. Sentuhan Kustom CSS (Sidebar, Metrics, & Bagan Grafik dengan Transparansi Pastel)
 st.markdown("""
     <style>
     .stApp {
         background-color: #f8f9fa;
     }
-    section[data-testid="stSidebar"] {
-        background-color: rgba(241, 243, 245, 0.95) !important;
-        border-right: 1px solid #dee2e6;
-    }
-    section[data-testid="stSidebar"] .stSelectbox label {
-        color: #495057 !important;
-        font-weight: 700 !important;
-    }
-    section[data-testid="stSidebar"] div[data-baseweb="select"] {
-        background-color: rgba(74, 144, 226, 0.08) !important;
-        border: 1px solid rgba(74, 144, 226, 0.3) !important;
-        border-radius: 8px;
-    }
-    div[data-testid="stHorizontalBlock"] > div:nth-child(1) div[data-testid="stMetric"] {
-        background-color: rgba(74, 144, 226, 0.12) !important;
-        border-left: 5px solid rgba(74, 144, 226, 0.7);
-    }
-    div[data-testid="stHorizontalBlock"] > div:nth-child(2) div[data-testid="stMetric"] {
-        background-color: rgba(76, 175, 80, 0.12) !important;
-        border-left: 5px solid rgba(76, 175, 80, 0.7);
-    }
-    div[data-testid="stHorizontalBlock"] > div:nth-child(3) div[data-testid="stMetric"] {
-        background-color: rgba(155, 89, 182, 0.12) !important;
-        border-left: 5px solid rgba(155, 89, 182, 0.7);
-    }
     div[data-testid="stMetric"] {
+        background-color: rgba(74, 144, 226, 0.10) !important;
+        border-left: 5px solid rgba(74, 144, 226, 0.7);
         border-radius: 12px !important;
         padding: 20px 25px !important;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01) !important;
-        border-top: 1px solid rgba(0,0,0,0.03) !important;
-        border-right: 1px solid rgba(0,0,0,0.03) !important;
-        border-bottom: 1px solid rgba(0,0,0,0.03) !important;
-        transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-    }
-    div[data-testid="stMetric"]:hover {
-        transform: translateY(-4px) !important;
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.06) !important;
     }
     div[data-testid="stMetricLabel"] {
         font-size: 13px !important;
         color: #495057 !important;
         font-weight: 700 !important;
-        letter-spacing: 0.5px;
     }
     div[data-testid="stMetricValue"] {
         font-size: 26px !important;
@@ -70,55 +36,48 @@ st.markdown("""
         padding: 15px !important;
         border-radius: 14px !important;
         border: 1px solid rgba(233, 236, 239, 0.8) !important;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.01) !important;
     }
-    hr {
-        margin-top: 2rem;
-        margin-bottom: 2rem;
-        border-color: #e9ecef;
-    }
+    hr { margin-top: 2rem; margin-bottom: 2rem; border-color: #e9ecef; }
     </style>
     """, unsafe_allow_html=True)
 
 st.title("📖 Dashboard Komunitas Lingkar Cerita")
-st.markdown("Memonitoring Konsistensi Membaca & Perkembangan Tren Empati Anggota.")
+st.markdown("Ringkasan aktivitas & keterlibatan membaca komunitas secara agregat.")
 st.markdown("---")
 
-# 3. KONEKSI DATA & CACHING
-# PENTING (privasi): URL ini HARUS menunjuk ke tab "Publik" yang TIDAK berisi
-# kolom Nomor WhatsApp — bukan tab mentah hasil Google Form. Nomor WA anggota
-# cukup dipakai oleh bot.js untuk reminder personal, tidak untuk dashboard publik.
-#
-# URL diambil dari st.secrets (Settings > Secrets di Streamlit Cloud), bukan
-# ditulis langsung di kode, supaya aman kalau kode ini di-share/upload ke GitHub.
 try:
     SHEET_CSV_URL = st.secrets["sheet_csv_url_publik"]
 except (KeyError, FileNotFoundError):
     st.error(
         "URL Google Sheets belum diatur. Tambahkan `sheet_csv_url_publik` di "
-        "Settings > Secrets (Streamlit Cloud) atau file `.streamlit/secrets.toml` "
-        "saat menjalankan secara lokal."
+        "Settings > Secrets (Streamlit Cloud) atau `.streamlit/secrets.toml` lokal."
     )
     st.stop()
 
-KOLOM_DIHARAPKAN = ['Timestamp', 'Nama', 'Judul Buku', 'Halaman', 'Refleksi', 'Skor Empati', 'Feedback AI']
+KOLOM_DIHARAPKAN = [
+    'Timestamp', 'Nama Anggota', 'Judul Buku & Penulis',
+    'Progress Membaca (Halaman Terakhir)', 'Refleksi atau Afeksi setelah membaca',
+    'Skor Empati AI', 'Analisis & Feedback AI'
+]
 
 
-@st.cache_data(ttl=300)  # Data disimpan di memori selama 5 menit agar loading instan
+@st.cache_data(ttl=300)
 def load_data():
     try:
         df = pd.read_csv(SHEET_CSV_URL)
         if len(df.columns) != len(KOLOM_DIHARAPKAN):
             st.warning(
                 f"Jumlah kolom di sheet ({len(df.columns)}) tidak sesuai dugaan "
-                f"({len(KOLOM_DIHARAPKAN)}). Pastikan tab 'Publik' hanya berisi "
-                f"kolom: {', '.join(KOLOM_DIHARAPKAN)} — tanpa kolom Nomor WhatsApp."
+                f"({len(KOLOM_DIHARAPKAN)}). Cek lagi tab 'Publik' di Sheets."
             )
             return None
         df.columns = KOLOM_DIHARAPKAN
-        df['Timestamp'] = pd.to_datetime(df['Timestamp'], errors='coerce')
-        df['Skor Empati'] = pd.to_numeric(df['Skor Empati'], errors='coerce')
-        df['Halaman'] = pd.to_numeric(df['Halaman'], errors='coerce')
+        # PENTING: format tanggal di sheet adalah locale Indonesia (tanggal duluan,
+        # DD/MM/YYYY) — dayfirst=True wajib, kalau tidak bulan & tanggal akan tertukar
+        # (bug yang sama seperti yang pernah kita perbaiki di bot.js)
+        df['Timestamp'] = pd.to_datetime(df['Timestamp'], dayfirst=True, errors='coerce')
+        df['Skor Empati AI'] = pd.to_numeric(df['Skor Empati AI'], errors='coerce')
+        df['Progress Membaca (Halaman Terakhir)'] = pd.to_numeric(df['Progress Membaca (Halaman Terakhir)'], errors='coerce')
         return df
     except Exception:
         return None
@@ -126,86 +85,61 @@ def load_data():
 
 df = load_data()
 
-if df is not None:
-    st.sidebar.header("🎯 Kontrol Navigasi")
-    st.sidebar.markdown("Gunakan filter di bawah ini untuk melihat metrik personal atau kelompok.")
+if df is not None and not df.empty:
+    total_laporan = len(df)
+    total_halaman = int(df['Progress Membaca (Halaman Terakhir)'].sum(skipna=True)) if df['Progress Membaca (Halaman Terakhir)'].notna().any() else 0
+    jumlah_anggota = df['Nama Anggota'].nunique()
+    rata_skor = df['Skor Empati AI'].mean()
+    rata_skor_text = f"{rata_skor:.1f}/100" if pd.notna(rata_skor) else "Belum ada data"
 
-    list_nama = ["Semua Anggota"] + sorted(df['Nama'].dropna().unique().tolist())
-    pilihan_nama = st.sidebar.selectbox("Pilih Anggota:", list_nama)
-
-    df_filtered = df if pilihan_nama == "Semua Anggota" else df[df['Nama'] == pilihan_nama]
-
-    # --- ROW 1: METRICS CARDS ---
-    c1, c2, c3 = st.columns(3)
-
-    total_laporan = len(df_filtered)
-    total_halaman = int(df_filtered['Halaman'].sum()) if not df_filtered['Halaman'].isna().all() else 0
-    rata_empati = df_filtered['Skor Empati'].mean()
-    rata_empati_text = f"{rata_empati:.1f}/100" if pd.notna(rata_empati) else "Belum ada data"
-
-    c1.metric(label="📚 TOTAL LAPORAN", value=f"{total_laporan} Data")
-    c2.metric(label="🔥 TOTAL HALAMAN DIBACA", value=f"{total_halaman} Hlm")
-    c3.metric(label="🧠 RATA-RATA SKOR EMPATI", value=rata_empati_text)
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("📚 Total Laporan", f"{total_laporan}")
+    c2.metric("🔥 Total Halaman Komunitas", f"{total_halaman} hlm")
+    c3.metric("👥 Anggota Berpartisipasi", f"{jumlah_anggota} orang")
+    c4.metric("🧠 Rata-rata Skor Keterlibatan", rata_skor_text)
 
     st.markdown("---")
 
-    # --- ROW 2: GRAFIK ---
-    col_grafik1, col_grafik2 = st.columns([1, 1.5])
+    df_valid = df.dropna(subset=['Timestamp']).copy()
 
-    with col_grafik1:
-        st.subheader("📊 Distribusi Kontribusi")
-        if not df_filtered.empty:
-            fig_pie = px.pie(
-                df_filtered,
-                names='Nama',
-                hole=0.5,
-                template="plotly_white",
-                color_discrete_sequence=px.colors.qualitative.Pastel
+    if not df_valid.empty:
+        df_valid['MingguPeriod'] = df_valid['Timestamp'].dt.to_period('W')
+        df_valid['Minggu'] = df_valid['MingguPeriod'].apply(lambda p: p.start_time.strftime('%d %b'))
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.subheader("📈 Tren skor keterlibatan komunitas")
+            tren_skor = (
+                df_valid.groupby(['MingguPeriod', 'Minggu'])['Skor Empati AI']
+                .mean().reset_index().sort_values('MingguPeriod')
             )
-            fig_pie.update_layout(showlegend=True, legend=dict(orientation="h", y=-0.1))
-            st.plotly_chart(fig_pie, use_container_width=True)
-        else:
-            st.info("Belum ada data untuk ditampilkan.")
+            if tren_skor['Skor Empati AI'].notna().any():
+                fig1 = px.line(tren_skor, x='Minggu', y='Skor Empati AI', markers=True, template="plotly_white")
+                fig1.update_layout(yaxis_title="Skor rata-rata (1-100)", xaxis_title="")
+                fig1.update_traces(line_color='#7F77DD', marker_color='#7F77DD')
+                st.plotly_chart(fig1, use_container_width=True)
+            else:
+                st.info("Belum cukup data untuk tren skor.")
 
-    with col_grafik2:
-        st.subheader("📈 Rata-rata Skor Empati per Anggota")
-
-        df_avg_empati = df_filtered.groupby('Nama')['Skor Empati'].mean().reset_index()
-        df_avg_empati = df_avg_empati.dropna().sort_values('Skor Empati', ascending=True)
-
-        if not df_avg_empati.empty:
-            fig_trend = px.bar(
-                df_avg_empati,
-                x='Skor Empati',
-                y='Nama',
-                orientation='h',
-                text='Skor Empati',
-                template="plotly_white",
-                color='Skor Empati',
-                color_continuous_scale=px.colors.sequential.Purples
+        with col2:
+            st.subheader("📊 Jumlah laporan per minggu")
+            tren_laporan = (
+                df_valid.groupby(['MingguPeriod', 'Minggu']).size()
+                .reset_index(name='Jumlah Laporan').sort_values('MingguPeriod')
             )
-            fig_trend.update_traces(
-                texttemplate='%{text:.1f}',
-                textposition='inside',
-                # PERBAIKAN: tanpa spasi setelah "%" — format Plotly harus %{x}, bukan % {x}
-                hovertemplate="<b>%{y}</b><br>Rata-rata Skor: %{x:.1f}<extra></extra>"
-            )
-            fig_trend.update_layout(coloraxis_showscale=False, xaxis_title="Skor Empati (1-100)", yaxis_title="")
-            st.plotly_chart(fig_trend, use_container_width=True)
-        else:
-            st.info("Belum ada data skor empati untuk visualisasi tren.")
+            fig2 = px.bar(tren_laporan, x='Minggu', y='Jumlah Laporan', template="plotly_white",
+                          color_discrete_sequence=['#1D9E75'])
+            fig2.update_layout(xaxis_title="", yaxis_title="Jumlah laporan")
+            st.plotly_chart(fig2, use_container_width=True)
+    else:
+        st.info("Belum ada data dengan tanggal valid untuk ditampilkan sebagai tren.")
 
-    # --- ROW 3: TABEL DATA ---
     st.markdown("---")
-    st.subheader("📄 Catatan Refleksi & Feedback AI Terbaru")
-
-    tabel_tampil = df_filtered[['Timestamp', 'Nama', 'Judul Buku', 'Halaman', 'Skor Empati', 'Feedback AI']].sort_values('Timestamp', ascending=False)
-
-    st.dataframe(
-        tabel_tampil,
-        use_container_width=True,
-        hide_index=True
+    st.caption(
+        "Data ditampilkan secara agregat untuk menjaga privasi anggota — "
+        "detail refleksi, judul buku, dan progres personal tidak ditampilkan publik."
     )
 
 else:
-    st.warning("⚠️ Koneksi data gagal. Periksa kembali URL CSV Google Sheets di Secrets.")
+    st.warning("⚠️ Data belum tersedia atau koneksi ke Google Sheets gagal.")
