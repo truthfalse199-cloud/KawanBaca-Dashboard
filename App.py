@@ -9,7 +9,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-.stApp {
+ .stApp {
         background: linear-gradient(135deg, #eef2fb 0%, #f3eefc 45%, #fdf1f5 100%);
     }
     div[data-testid="stHorizontalBlock"] > div:nth-child(1) div[data-testid="stMetric"] {
