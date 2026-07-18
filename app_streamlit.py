@@ -152,7 +152,7 @@ if data is not None:
         f"{custom_script}<script>{js_content_modified}</script>"
     )
 
-    # Embed aplikasi premium ke dalam iframe Streamlit dengan tinggi responsif
-    st.components.v1.html(html_ready, height=850, scrolling=True)
+    # Menggunakan st.html untuk menyisipkan HTML kustom secara langsung tanpa iframe sandbox eksternal
+    st.html(html_ready)
 else:
     st.warning("⚠️ Gagal memuat data dari Google Sheets. Pastikan URL benar dan sheet sudah dipublikasikan.")
